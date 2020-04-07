@@ -1,0 +1,13 @@
+name: ms_6_shiny
+title: ms_6_shiny
+username:
+account: tahmid-ahmed
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2053529
+bundleId: 2966191
+url: https://tahmid-ahmed.shinyapps.io/ms_6_shiny/
+when: 1585947012.95556
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: TBpost.png
