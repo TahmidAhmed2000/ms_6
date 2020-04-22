@@ -14,26 +14,27 @@ library(gt)
 library(rvest)
 library(xml2)
 library(magrittr)
+library(ggthemes)
 ```
 
 ```{r kicker, echo=FALSE, include=FALSE}
 # Downloading Kicker Data
 url_kickers = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/Game_Logs_Kickers.csv"
-url_kickerdata <- read_csv(url(url_kickers)) %>%
+url_kickers <- read_csv(url(url_kickers)) %>%
   clean_names()
-url_kickerdata
+url_kickers
 ```
 
 ```{r qb, echo=FALSE, include=FALSE}
 # Downloading qb data
 url_qb = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/Game_Logs_Quarterback.csv"
-url_qbdata <- read_csv(url(url_qb))
+url_qb <- read_csv(url(url_qb))
 ```
 
 ```{r rb, include = FALSE, echo = FALSE}
 # Downloading rb data
 url_rb = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/Game_Logs_Runningback.csv"
-url_rbdata <- read_csv(url(url_rb))
+url_rb <- read_csv(url(url_rb))
 ```
 
 ```{r weather, include = FALSE, echo = FALSE}
@@ -47,21 +48,54 @@ weather
 ```{r qbweather, include = FALSE, echo = FALSE}
 # Qb and weather data merged
 url_qbweather = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/QB_weather_cleaned.csv"
-url_qbweatherdata <- read_csv(url(url_qbweather))
-url_qbweatherdata
+url_qbweather<- read_csv(url(url_qbweather))
+url_qbweather
 ```
 
 ```{r weat, include = FALSE, echo = FALSE}
 # weather in all games 
 url_weathergit = "https://raw.githubusercontent.com/Nolanole/NFL-Weather-Project/master/all_games_weather.csv"
-url_weathergitdata <- read_csv(url(url_weathergit))
+url_weathergit <- read_csv(url(url_weathergit))
 ```
+
+```{r}
+url_stadium = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-04/attendance.csv"
+url_stadium <- read_csv(url(url_stadium))
+```
+
+```{r}
+
+giantsweather <- url_weathergit %>%
+  filter(away == "New York Giants" | home == "New York Giants") %>%
+  slice(495:627) %>%
+  slice(-c(33:36, 117)) %>%
+  mutate(id = 1:n())
+
+giants_stadium <- url_stadium %>%
+  filter(team_name == "Giants" & (year == 2010 | year == 2011 | year == 2012 | year == 2013 | year == 2014 | year == 2015 | year == 2016 | year == 2017) & weekly_attendance != "NA") %>%
+  mutate(id = 1:n())
+
+```
+
+```{r}
+
+joineddata <- left_join(giantsweather, giants_stadium, by = "id")
+
+ggplot(joineddata, aes(avg_temp, weekly_attendance)) +
+  geom_point() + geom_smooth() +
+  theme_classic() 
+
+```
+
+
+
+
 
 ```{r EM, echo = FALSE}
 # creating plot of weather impact on Tom Brady during Postseason
-EM_regular <- url_qbweatherdata %>%
+EM_regular <- url_qbweather %>%
 filter(name == "Manning, Eli", season == "Regular Season")
-EM_regularplot <- url_qbweatherdata %>%
+EM_regularplot <- url_qbweather %>%
 filter(name == "Manning, Eli", season == "Regular Season") %>%
   ggplot(aes(avg_temp, yards)) +
   geom_point() +
@@ -71,6 +105,7 @@ filter(name == "Manning, Eli", season == "Regular Season") %>%
   labs(subtitle = "At start of career to 2017") +
   ylab("Yards") +
   xlab("Temperature")
+EM_regularplot
 ```
 
 ```{r ggsavep1, message=FALSE}
@@ -82,7 +117,7 @@ ggsave(EM_regularplot, filename = "ms_6_shiny/EMreg.png")
 
 
 ```{r TB, echo = FALSE}
-TB_postplot <- url_qbweatherdata %>%
+TB_postplot <- url_qbweather %>%
 filter(name == "Brady, Tom", season == "Postseason") %>%
   ggplot(aes(avg_temp, comp_percent)) +
   geom_line() +
@@ -94,11 +129,3 @@ filter(name == "Brady, Tom", season == "Postseason") %>%
 ```
 
 
-```{r ggsavep2, mesage = FALSE}
-
-ggsave(TB_postplot, filename = "ms_6_shiny/TBpost.png")
-
-
-
-
-```
