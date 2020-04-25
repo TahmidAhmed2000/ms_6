@@ -63,13 +63,20 @@ url_stadium = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/mas
 url_stadium <- read_csv(url(url_stadium))
 ```
 
+
+```{r}
+nba <- read_csv(url("https://raw.githubusercontent.com/ananhafez/NBA-Final-Project/master/NBA_App/Data/Seasons_stats_complete.csv"))
+```
+
 ```{r}
 
 giantsweather <- url_weathergit %>%
   filter(away == "New York Giants" | home == "New York Giants") %>%
   slice(495:627) %>%
   slice(-c(33:36, 117)) %>%
-  mutate(id = 1:n())
+  mutate(id = 1:n()) %>%
+  mutate(giants_points = ifelse(home == "New York Giants", score_home, score_away))
+
 
 giants_stadium <- url_stadium %>%
   filter(team_name == "Giants" & (year == 2010 | year == 2011 | year == 2012 | year == 2013 | year == 2014 | year == 2015 | year == 2016 | year == 2017) & weekly_attendance != "NA") %>%
@@ -77,16 +84,27 @@ giants_stadium <- url_stadium %>%
 
 ```
 
+
+
 ```{r}
 
 joineddata <- left_join(giantsweather, giants_stadium, by = "id")
 
-ggplot(joineddata, aes(avg_temp, weekly_attendance)) +
-  geom_point() + geom_smooth() +
+attendance <- ggplot(joineddata, aes(avg_temp, weekly_attendance)) +
+  geom_point() + geom_smooth(method = "lm") +
   theme_classic() 
+attendance
 
 ```
 
+
+```{r}
+
+giantsweather %>% ggplot(aes(date, giants_points)) + geom_point()
+  
+
+
+```
 
 
 
