@@ -97,6 +97,9 @@ attendance <- ggplot(joineddata, aes(avg_temp, weekly_attendance)) +
   ylab("Attendance") +
   xlab("Temperature")
 attendance
+
+saveRDS(joineddata, file = "shiny/joined.rds")
+
 ```
 
 

@@ -9,7 +9,9 @@
 
 library(shiny)
 library(shinythemes)
+library(tidyverse)
 
+joined <- readRDS("joined.rds")
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -18,7 +20,7 @@ ui <- fluidPage(
                tabPanel("Stadium Attendance", mainPanel(h1('Stadium Attendance Regression'),
                                               p("This plot joined both weather data and stadium attendance of the New York Giants. It can be seen that there over time, there is no strong correlation between average temperature and stadium attendance. While the relationship is not significant, this plot shows that fans will attend games no matter the temperature."),
                                               p("Another notable aspect of the plot is that games with 90,000 attendees seems to be outliers. They are outliers because this is when the Giants play in the Cowboys stadium, which is one of the stadiums that holds the most amount of fans."),
-                                              plotOutput("attendance"))),
+                                              plotOutput("attendanceplot"))),
                tabPanel("Analysis", h1('Looking at Regression'),
                         p("After conducing a regression of temperature and stadium attendance, I get a correlation of -.03, which shows that there weekly attendance and temperature have a week relation. Furthermore, the regression coefficient for avg_temp was -16.08 with a p-value of .734. Given that the p-value is also greater than 0.05, based on the p-value test, this coefficient is not statistically significant)."
                         
@@ -38,7 +40,16 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
     
-    output$attendance <- renderPlot({attendance})
+    output$attendanceplot <- renderPlot({plot1 <- joined %>%
+            ggplot(aes(avg_temp, weekly_attendance)) +
+            geom_point() + geom_smooth(method = "lm") +
+            theme_classic() +
+            labs(title = "Weather's Impact on Attendance of Giants Games",
+                 subtitle = "Appears to be no correlation") +
+            ylab("Attendance") +
+            xlab("Temperature")
+    plot1
+        })
 
 }
 
