@@ -87,13 +87,24 @@ giants_stadium <- url_stadium %>%
 
 
 ```{r}
-
 joineddata <- left_join(giantsweather, giants_stadium, by = "id")
 
 attendance <- ggplot(joineddata, aes(avg_temp, weekly_attendance)) +
   geom_point() + geom_smooth(method = "lm") +
-  theme_classic() 
+  theme_classic() +
+  labs(title = "Weather's Impact on Attendance of Giants Games",
+       subtitle = "Appears to be no correlation") +
+  ylab("Attendance") +
+  xlab("Temperature")
 attendance
+```
+
+
+```{r}
+fitattendance <- lm(weekly_attendance ~ avg_temp, data = joineddata) 
+joineddata %>%
+  summarize(correlation = cor(avg_temp, weekly_attendance))
+summary(fitattendance)
 
 ```
 
