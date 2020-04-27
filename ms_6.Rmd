@@ -15,6 +15,7 @@ library(rvest)
 library(xml2)
 library(magrittr)
 library(ggthemes)
+library(plotly)
 ```
 
 ```{r kicker, echo=FALSE, include=FALSE}
@@ -159,5 +160,26 @@ filter(name == "Brady, Tom", season == "Postseason") %>%
   ylab("Completion Percentage") +
   xlab("Temperature")
 ```
+
+```{r include=FALSE}
+
+box_scores <- read_csv('raw-data/box_scores.csv')
+
+```
+
+```{r}
+giants2012 <- box_scores %>%
+  filter(visitor == "NY Giants" | home == "New York Giants") %>%
+    filter(grepl("2012", date))
+```
+
+```{r}
+url_rb %>%
+  filter(Name == "Jacobs, Brandon" | Name == "Jennings, Rashad", Season == "Regular Season") %>%
+  filter(grepl("2010|2011|2012|2013|2014|2015|2016", Year)) 
+```
+
+
+
 
 
